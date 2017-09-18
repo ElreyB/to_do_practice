@@ -18,8 +18,10 @@ end
 
 post("/lists") do
   name = params.fetch("name")
-  list = List.new({:name => name, :id => nil})
-  list.save
+  if !name.empty?
+    list = List.new({:name => name, :id => nil})
+    list.save
+  end
   erb(:list_success)
 end
 

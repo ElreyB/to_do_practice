@@ -23,8 +23,8 @@ class Task
     DB.exec("INSERT INTO tasks (description, list_id, due_date) VALUES ('#{@description}', #{@list_id}, '#{@due_date}');")
   end
 
-  def self.sort
-    return_sorted_tasks = DB.exec("SELECT * FROM tasks ORDER BY due_date ASC")
+  def self.sort_by(column_name)
+    return_sorted_tasks = DB.exec("SELECT * FROM tasks ORDER BY #{column_name} ASC")
     sorted_tasks = []
     return_sorted_tasks.each do |task|
       description = task.fetch('description')
@@ -36,6 +36,6 @@ class Task
   end
 
   def ==(another_task)
-    self.description == another_task.description
+    self.description == another_task.description && self.list_id == another_task.list_id
   end
 end

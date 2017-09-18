@@ -34,16 +34,15 @@ let(:task1) { Task.new({:description => "learn SQL", :list_id => 1, :due_date =>
     end
   end
 
-  describe ".sort" do
+  describe ".sort_by" do
     it "will return a sort list of tasks" do
       task1.save
       task2 = Task.new({:description => "learn SQL", :list_id => 1, :due_date => '2017-03-15'})
       task3 = Task.new({:description => "learn SQL", :list_id => 1, :due_date => '2017-01-15'})
       task2.save
       task3.save
-      p Task.sort.first
-       task1 = Task.sort.first
-      expect(task1.due_date).to eq "2017-02-22 00:00:00"
+       first_task = Task.sort_by("due_date").first
+      expect(first_task.due_date).to eq "2017-01-15 00:00:00"
     end
   end
 

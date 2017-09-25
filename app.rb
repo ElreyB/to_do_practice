@@ -1,33 +1,23 @@
 require("sinatra")
 require("sinatra/reloader")
+require("sinatra-activerecord")
 also_reload("lib/**/*.rb")
 require("./lib/task")
 require("./lib/list")
 require("pg")
-require("pry")
 
-DB = PG.connect({:dbname => "to_do"})
 
 get("/") do
+  @lists = List.all()
   erb(:index)
-end
-
-get("/lists/new") do
-  erb(:list_form)
 end
 
 post("/lists") do
   name = params.fetch("name")
-  if !name.empty?
-    list = List.new({:name => name, :id => nil})
-    list.save
-  end
-  erb(:list_success)
-end
-
-get('/lists') do
+  list = List.new({:name => name, :id => nil})
+  list.save()
   @lists = List.all()
-  erb(:lists)
+  erb(:index)
 end
 
 get("/lists/:id") do
@@ -35,11 +25,31 @@ get("/lists/:id") do
   erb(:list)
 end
 
+get("/lists/:id/edit") do
+  @list = List.find(params.fetch("id").to_i())
+  erb(:list_edit)
+end
+
+patch("/lists/:id") do
+  name = params.fetch("name")
+  @list = List.find(params.fetch("id").to_i())
+  @list.update({:name => name})
+  erb(:list)
+end
+
 post("/tasks") do
   description = params.fetch("description")
   list_id = params.fetch("list_id").to_i()
+  due_date = params["due-date"] == "" ? Date.today : params["due-date"]
+  task = Task.new({:description => description, :list_id => list_id, due_date: due_date})
+  task.save()
   @list = List.find(list_id)
-  @task = Task.new({:description => description, :list_id => list_id, :due_date => '2017-09-22'})
-  @task.save()
-  erb(:task_success)
+  erb(:list)
+end
+
+delete("/lists/:id") do
+  @list = List.find(params.fetch("id").to_i())
+  @list.delete()
+  @lists = List.all()
+  redirect "index"
 end

@@ -42,7 +42,7 @@ let(:task1) { Task.new({:description => "learn SQL", :list_id => 1, :due_date =>
       task2.save
       task3.save
        first_task = Task.sort_by("due_date").first
-      expect(first_task.due_date).to eq "2017-01-15 00:00:00"
+      expect(first_task.due_date).to eq "2017-01-15"
     end
   end
 
